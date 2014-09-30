@@ -2,7 +2,7 @@
 
 > Small Grunt task for generating background-images from x2 size to x1.
 
-Due to fact this task is small configurable async wrapper for imageMagic utils, which aimed to create retina and non-retina image subsets a bit easier. It provides an access to ImageMagick via the node_imagemagick package.
+Due to fact this task is small configurable async wrapper for [imageMagic](http://www.imagemagick.org/) utils, which aimed to ease creating retina and non-retina image subsets. It provides an access to ImageMagick via the [node_imagemagick](https://github.com/rsms/node-imagemagick) package.
 
 ## Getting Started
 This task requires Grunt `~0.4.0`
@@ -37,7 +37,7 @@ Here is the task configuration example.
 
 ```javascript
 grunt.initConfig(
-    "retinaImages": {
+    "retinaImg": {
         dev: {
             files:"path/to/images/**/*@2x.png",
             suffixes:["@2x",""]
@@ -53,7 +53,7 @@ The result looks like this:
 ./button@2x.png
 ./button.png
 ./sub/pic@x2.png
-./sub/pic@x2.png
+./sub/pic.png
 ```
 
 ## License
