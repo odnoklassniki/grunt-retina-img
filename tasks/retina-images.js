@@ -54,7 +54,7 @@ var ImageMagicWrapper = {
 };
 
 module.exports = function(grunt) {
-	grunt.registerMultiTask('retinaImages', 'generates images set due to configuration', function() {
+	grunt.registerMultiTask('retinaImg', 'generates images set due to configuration', function() {
     
     	var done = this.async();
     	grunt.log.warn("\nPlease make sure that you installed imageMagic CLI before start.\n");
