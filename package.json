@@ -1,0 +1,39 @@
+{
+  "name": "grunt-retina-img",
+  "description": "Grunt task for generating background-images. It is the simple wrapper for node-imagemagick.",
+  "version": "0.0.1",
+  "homepage": "https://github.com/odnoklassniki/grunt-retina-img",
+  "author": "Cheshirsky",
+  "files": [
+    "tasks"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/odnoklassniki/grunt-retina-img.git"
+   },
+  "main": "index.js",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2"
+  },
+  "dependencies": {
+    "node-imagemagick":""
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.0"
+  },
+  "keywords": [
+    "gruntplugin",
+    "retina",
+    "images"
+  ],
+  "bugs": {
+    "url": "https://github.com/odnoklassniki/grunt-retina-img/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT"
+}
