@@ -29,7 +29,7 @@ There is an example below.
 #### suffixes
 Type: `Array`
 
-It defines prefixes for `x2` and `x1` files like this: `suffixes: ['x2', 'x1'].
+It defines prefixes for `x2` and `x1` files like this: `suffixes: ['x2', 'x1']`.
 
 ## Usage example
 
@@ -45,6 +45,15 @@ grunt.initConfig(
     },
     ...
 });
+```
+
+The result looks like this:
+
+```
+./button@2x.png
+./button.png
+./sub/pic@x2.png
+./sub/pic@x2.png
 ```
 
 ## License
