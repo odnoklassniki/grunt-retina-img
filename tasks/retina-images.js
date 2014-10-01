@@ -22,19 +22,19 @@ var ImageMagicWrapper = {
 			this.suffixes = suffixes;
 			this.callback = callback;
 			this.context = context;
-
-			this.im.identify(['-format', '%wx%h', this.file], proxy(this.resize, this));
+			this.im.identify(this.file, proxy(this.resize, this));
 		} catch(e) {
 			this.complete(false, e);
 		}
 	},
-	"resize": function(err, output) {
+	"resize": function(err, features) {
 		try {
-			this.baseWidth = Number(output.split('x')[0]);
-			this.baseHeight = Number(output.split('x')[1]);
+			if (err) { this.complete(false, err) };
+			this.baseWidth = features && features.width ? features.width : 0;
+			this.baseHeight = features && features.height ? features.height : 0;
 			var resultName = this.path + this.name.split(this.suffixes[0]).join(this.suffixes[1]) + '.' + this.extention;
 
-			if (fs.existsSync(resultName)) {
+			if (fs.existsSync(resultName) || !this.baseWidth || !this.baseHeight) {
 				this.complete(this, true);
 			} else {
 				this.im.resize({
@@ -67,7 +67,7 @@ module.exports = function(grunt) {
 
 		function onComplete(cmd, success, err) {
 			if (!success) {
-				grunt.log.write("Error in: ", cmd.file, " processing: [ ", (err && err.code ? err.code : "UnknownError"), " ]\n");
+				grunt.log.write("Error in: ", cmd.file, " processing: [", (err && err.code ? err.code : "UnknownError"), "]\n");
 			}
 			cmds.splice(cmds.indexOf(cmd), 1);
 			if (!cmds.length) {
