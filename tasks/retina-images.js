@@ -2,7 +2,7 @@ var grunt = require('grunt');
 var fs = require('fs');
 
 var proxy = function(func, context) {
-    var _func = func;
+	var _func = func;
 	var _context = context;
 	return function() {
 		_func.apply(_context, Array.prototype.slice.call(arguments));
@@ -23,65 +23,67 @@ var ImageMagicWrapper = {
 			this.callback = callback;
 			this.context = context;
 
-      		this.im.identify(['-format', '%wx%h', this.file], proxy(this.resize, this));
-	    } catch(e) {
-	      	grunt.log.write('error ' + e + "\n");
-	    }
+			this.im.identify(['-format', '%wx%h', this.file], proxy(this.resize, this));
+		} catch(e) {
+			this.complete(false, e);
+		}
 	},
 	"resize": function(err, output) {
-    	try {
-    		this.baseWidth = Number(output.split('x')[0]);
-    		this.baseHeight = Number(output.split('x')[1]);
-    		var resultName = this.path + this.name.split(this.suffixes[0]).join(this.suffixes[1]) + '.' + this.extention;
+		try {
+			this.baseWidth = Number(output.split('x')[0]);
+			this.baseHeight = Number(output.split('x')[1]);
+			var resultName = this.path + this.name.split(this.suffixes[0]).join(this.suffixes[1]) + '.' + this.extention;
 
-	    	if (fs.existsSync(resultName)) {
-	    		this.complete(this, true);
-	    	} else {
-	    		this.im.resize({
-		      		"width": Math.round(this.baseWidth/2),
-		      		"height": Math.round(this.baseHeight/2),
-		      		"srcPath": this.file,
-		      		"dstPath": resultName
-		    	}, proxy(this.complete, this));
-	    	}
-	    } catch (e) {
-	      grunt.log.write('error ' + e + "\n");
-	    }
-  	},
-	"complete": function() {
-		this.callback.apply(this.context,[this, true]);
+			if (fs.existsSync(resultName)) {
+				this.complete(this, true);
+			} else {
+				this.im.resize({
+					"width": Math.round(this.baseWidth/2),
+					"height": Math.round(this.baseHeight/2),
+					"srcPath": this.file,
+					"dstPath": resultName
+				}, proxy(this.complete, this));
+				grunt.log.write('file [', resultName, '] is created.\n');
+
+			}
+		} catch (e) {
+			this.complete(false, e);
+		}
+	},
+	"complete": function(success, error) {
+		this.callback.apply(this.context,[this, success, error]);
 	}
 };
 
 module.exports = function(grunt) {
 	grunt.registerMultiTask('retinaImg', 'generates images set due to configuration', function() {
-    
-    	var done = this.async();
-    	grunt.log.warn("\nPlease make sure that you installed imageMagic CLI before start.\n");
+		var done = this.async();
+		grunt.log.warn("\nPlease make sure that you installed imageMagic CLI before start.\n");
+		var files = grunt.file.expand(this.data.files);
+		var suffixes = this.data.suffixes || ["@2x", "@1x"];
 
-    	var files = grunt.file.expand(this.data.files);
-    	var suffixes = this.data.suffixes || ["@2x", "@1x"];
+		var cmds=[];
+		var cmd;
 
-    	var cmds=[];
-    	var cmd;
-
-	    function onComplete(cmd, success) {
-			grunt.log.write("done: " + cmd.file + "\n");
+		function onComplete(cmd, success, err) {
+			if (!success) {
+				grunt.log.write("Error in: ", cmd.file, " processing: [ ", (err && err.code ? err.code : "UnknownError"), " ]\n");
+			}
 			cmds.splice(cmds.indexOf(cmd), 1);
 			if (!cmds.length) {
 				done();
 			}
-	    }
+		}
 
-	    for (var i = 0; i < files.length; i++) {
+		for (var i = 0; i < files.length; i++) {
 			cmd = Object.create(ImageMagicWrapper);
-	      	cmds.push(cmd);
-	      	cmd.init(files[i], suffixes, onComplete, this);
-	    }
+			cmds.push(cmd);
+			cmd.init(files[i], suffixes, onComplete, this);
+		}
 
-	    if (!files.length) {
+		if (!files.length) {
 			grunt.log.write("Nothing to do\n");
 			done();
-	    }
+		}
 	});
 };
